@@ -11,70 +11,68 @@ public class HlavniProgram {
         new HlavniProgram().start();
     }
 
+    double STEP_LENGTH = 6;
+
     public void start() {
         zofka.setPenColor(Color.black);
         zofka.setPenWidth(4);
 
+
         //TODO Tady bude kód pro kreslení želví grafiky.
-//        drawIceCream(70.0);
+//        drawIceCream();
 //        drawSnowman();
         drawTrain();
     }
 
     // Part 2
     // Ice cream
-    public void drawIceCream(double iceCreamDiameter) {
+    public void drawIceCream() {
         moveToDefaultPosition();
-
-        drawIsocelesTriangle(iceCreamDiameter);
-
-        int steps = 36;
-        double circleCircumference = Math.PI * iceCreamDiameter;
-        double stepLength = circleCircumference / steps;
-        double circleAngle = 360.0 / steps;
-
-        drawPolygon(steps, stepLength, circleAngle);
+        drawIsocelesTriangle(70.0);
+        drawPolygon(36, STEP_LENGTH, 360.0 / 36);
     }
 
     // Snowman
     public void drawSnowman() {
-        moveToDefaultPosition();
-
         int headSteps = 36;
         int middleSteps = 60;
         int bottomSteps = 90;
         int handSteps = 16;
 
-        double stepLength = 6;
+        // Calculation of radii and hand diameter
+        double headRadius = calculateRadius(headSteps, STEP_LENGTH);
+        double middleRadius = calculateRadius(middleSteps, STEP_LENGTH);
+        double bottomRadius = calculateRadius(bottomSteps, STEP_LENGTH);
+        double handDiameter = calculateDiameter(handSteps, STEP_LENGTH);
 
         // Head
-        double headRadius = (headSteps * stepLength) / (2 * Math.PI);
-        drawPolygon(headSteps, stepLength, 360.0 / headSteps);
+        moveToDefaultPosition();
+        drawSnowBall(headSteps, STEP_LENGTH);
 
         // Middle circle
-        double middleRadius = (middleSteps * stepLength) / (2 * Math.PI);
         zofka.setLocation(zofka.getX() + middleRadius / 3, zofka.getY() + headRadius + middleRadius);
-        drawPolygon(middleSteps, stepLength, 360.0 / middleSteps);
+        drawSnowBall(middleSteps, STEP_LENGTH);
 
         // Lower circle
-        double bottomRadius = (bottomSteps * stepLength) / (2 * Math.PI);
         zofka.setLocation(zofka.getX() + bottomRadius / 3, zofka.getY() + middleRadius + bottomRadius);
-        drawPolygon(bottomSteps, stepLength, 360.0 / bottomSteps);
+        drawSnowBall(bottomSteps, STEP_LENGTH);
 
         // Right hand
-        double handDiameter = (handSteps * stepLength) / Math.PI;
         zofka.setLocation(zofka.getX(), zofka.getY() - middleRadius - bottomRadius);
-        drawPolygon(handSteps, stepLength, 360.0 / handSteps); // right hand
+        drawSnowBall(handSteps, STEP_LENGTH);
 
         // Left hand
         zofka.setLocation(zofka.getX() - handDiameter - (middleRadius * 2), zofka.getY());
-        drawPolygon(handSteps, stepLength, 360.0 / handSteps); // left hand
+        drawSnowBall(handSteps, STEP_LENGTH);
+    }
+
+    private void drawSnowBall(int steps, double stepLength) {
+        drawPolygon(steps, stepLength, 360.0 / steps);
     }
 
     public void drawTrain() {
         int backWheelSteps = 60;
-        double stepLength = 6;
-        double backWheelDiameter = (backWheelSteps * stepLength) / Math.PI;
+        double backWheelDiameter = calculateDiameter(backWheelSteps, STEP_LENGTH);
         double cabinHeight = backWheelDiameter * 1.3;
         double cabinWidth = backWheelDiameter;
         double engineHeight = cabinHeight / 2;
@@ -83,21 +81,18 @@ public class HlavniProgram {
         double frontWheelDiameter = backWheelDiameter / 2;
         double frontWheelOffset = engineWidth * 0.1;
 
-        drawBackWheel(backWheelSteps, stepLength);
+        drawBackWheel(backWheelSteps, STEP_LENGTH);
         drawCabine(cabinHeight, cabinWidth);
 
         zofka.setLocation(zofka.getX() - backWheelDiameter, zofka.getY());
         zofka.turnLeft(90);
         drawEngine(engineHeight, engineWidth);
 
-        // X-axis for plow
         double frontTrainX = zofka.getX() - engineWidth;
 
-        // Front wheels
         zofka.turnLeft(90);
-        drawFrontWheels(frontWheelSteps, stepLength, frontWheelDiameter, frontWheelOffset);
+        drawFrontWheels(frontWheelSteps, STEP_LENGTH, frontWheelDiameter, frontWheelOffset, 10);
 
-        // Plow
         zofka.setLocation(frontTrainX, zofka.getY());
         drawPlow(engineHeight);
     }
@@ -114,11 +109,11 @@ public class HlavniProgram {
         drawRectangle(height, width);
     }
 
-    private void drawFrontWheels(int steps, double stepLength, double diameter, double offset) {
+    private void drawFrontWheels(int steps, double stepLength, double diameter, double offset, double spacing) {
         zofka.setLocation(zofka.getX() - offset, zofka.getY() + diameter / 2);
         drawPolygon(steps, stepLength, 360.0 / steps);
 
-        zofka.setLocation(zofka.getX() - diameter - 10, zofka.getY());
+        zofka.setLocation(zofka.getX() - diameter - spacing, zofka.getY());
         drawPolygon(steps, stepLength, 360.0 / steps);
     }
 
@@ -128,6 +123,14 @@ public class HlavniProgram {
 
     public void moveToDefaultPosition() {
         zofka.setLocation(zofka.getX(), 150);
+    }
+
+    private double calculateDiameter(int steps, double stepLength) {
+        return (steps * stepLength) / Math.PI;
+    }
+
+    private double calculateRadius(int steps, double stepLength) {
+        return (steps * stepLength) / (2 * Math.PI);
     }
 
     // Part 1 - basic parametric shapes
