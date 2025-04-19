@@ -16,7 +16,8 @@ public class HlavniProgram {
         zofka.setPenWidth(4);
 
         //TODO Tady bude kód pro kreslení želví grafiky.
-        drawIceCream(70.0);
+//        drawIceCream(70.0);
+        drawSnowman();
     }
 
     // Part 2
@@ -30,6 +31,39 @@ public class HlavniProgram {
         double circleAngle = 360.0 / steps;
 
         drawPolygon(steps, stepLength, circleAngle);
+    }
+
+    public void drawSnowman() {
+        int headSteps = 36;
+        int middleSteps = 60;
+        int bottomSteps = 90;
+        int handSteps = 16;
+
+        double stepLength = 6;
+
+        // Head
+        double headRadius = (headSteps * stepLength) / (2 * Math.PI);
+        zofka.setLocation(400, 150);
+        drawPolygon(headSteps, stepLength, 360.0 / headSteps);
+
+        // Middle circle
+        double middleRadius = (middleSteps * stepLength) / (2 * Math.PI);
+        zofka.setLocation(zofka.getX() + middleRadius / 3, zofka.getY() + headRadius + middleRadius);
+        drawPolygon(middleSteps, stepLength, 360.0 / middleSteps);
+
+        // Lower circle
+        double bottomRadius = (bottomSteps * stepLength) / (2 * Math.PI);
+        zofka.setLocation(zofka.getX() + bottomRadius / 3, zofka.getY() + middleRadius + bottomRadius);
+        drawPolygon(bottomSteps, stepLength, 360.0 / bottomSteps);
+
+        // Right hand
+        double handDiameter = (handSteps * stepLength) / Math.PI;
+        zofka.setLocation(zofka.getX(), zofka.getY() - middleRadius - bottomRadius);
+        drawPolygon(handSteps, stepLength, 360.0 / handSteps); // right hand
+
+        // Left hand
+        zofka.setLocation(zofka.getX() - handDiameter - (middleRadius * 2), zofka.getY());
+        drawPolygon(handSteps, stepLength, 360.0 / handSteps); // left hand
     }
 
     // Part 1 - basic parametric shapes
